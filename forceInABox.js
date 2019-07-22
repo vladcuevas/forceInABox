@@ -46,6 +46,8 @@ function forceInABox () {
   let enableGrouping = true
 
   let strength = 0.1
+
+  let checkLinksByID = false
   // showingTemplate = false;
 
   function force (alpha) {
@@ -245,8 +247,13 @@ function forceInABox () {
       if (!nodes) return
       source = link.source
       target = link.target
-      if (typeof link.source !== 'object') source = nodes[link.source]
-      if (typeof link.target !== 'object') target = nodes[link.target]
+      if (checkLinksByID === true) {
+        if (typeof link.source !== 'object') nodes.forEach(node => { if (node.name === link.source) source = node })
+        if (typeof link.target !== 'object') nodes.forEach(node => { if (node.name === link.target) target = node })
+      } else {
+        if (typeof link.source !== 'object') source = nodes[link.source]
+        if (typeof link.target !== 'object') target = nodes[link.target]
+      }
       if (source === undefined || target === undefined) {
         // console.log(link)
         throw Error('Error setting links, couldn\'t find nodes for a link (see it on the console)')
@@ -351,6 +358,12 @@ function forceInABox () {
   force.strength = function (x) {
     if (!arguments.length) return strength
     strength = x
+    return force
+  }
+
+  force.checkLinksByID = function (x) {
+    if (!arguments.length) return checkLinksByID
+    checkLinksByID = x
     return force
   }
 
